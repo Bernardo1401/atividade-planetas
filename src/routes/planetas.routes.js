@@ -17,37 +17,50 @@ planetasRoutes.get("/", (req, res) => {
     return res.status(200).send(planetas)
     })
 
-    // Rota para criar novo filme marcante
+    // Rota para cadastrar um novo planeta
 planetasRoutes.post("/", (req, res) => {
-    const { nome, temperatura, agua } = req.body
-    
-    const novoFilme = {
-        id: Number(Math.floor(Math.random() * 99) + 1),
-        nome,
-        temperatura,
-        agua
+    const { nome, temperatura, agua, atm } = req.body
+
+    if(!nome || !temperatura || !agua ) {
+        return res.status(400).send({
+            message: "Os campos nome, temperatura e água são obrigatórios"
+        })
     }
     
-    planetas.push(novoFilme);
-    return res.status(201).send(planetas)
+    if(agua != "sim" && agua != "não"){
+        return res.status(400).send({
+            message: "Digite sim ou não"
+    })
+    }
+
+    const novoPlaneta = {
+        id: Number(Math.floor(Math.random() * 999999) + 1),
+        nome,
+        temperatura,
+        agua, 
+        atm
+    }
+    
+    planetas.push(novoPlaneta);
+    return res.status(201).send({message: "Planeta cadastrado!",
+        novoPlaneta
+})
     })
 
     
-// Rota para buscar um elemento especifico do array planetas
+// Rota para buscar um planeta especifico pelo id
 planetasRoutes.get("/:id", (req, res) => {
     const { id } = req.params
 
-    //console.log(id)
-
-    const filmes = planetas.find((movie) => 
-        movie.id === Number(id)
+    const planeta = planetas.find((planet) => 
+        planet.id === Number(id)
     )
 
-    if (!filmes) {
-        return res.status(404).send({message: "Filme não encontrado!" })
+    if (!planeta) {
+        return res.status(404).send({message: "Planeta não encontrado!" })
     }
 
-    return res.status(200).send(filmes)
+    return res.status(200).send(planeta)
 })
 
 // Rota para editar um filme marcante
@@ -55,24 +68,24 @@ planetasRoutes.put("/:id", (req, res) => {
     const { id } = req.params
 
     
-    const filmes = planetas.find((movie) => 
-        movie.id === Number(id)
+    const planeta = planetas.find((planet) => 
+        planet.id === Number(id)
     )
 
-    if (!filmes) {
-        return res.status(404).send({message: "filme não encontrado!" })
+    if (!planeta) {
+        return res.status(404).send({message: "Planeta não não encontrado!" })
     }
 
     const {nome, temperatura, agua} = req.body
     //console.log(nome)
 
-    filmes.nome = nome
-    filmes.temperatura = temperatura
-    filmes.agua = agua
+    planeta.nome = nome
+    planeta.temperatura = temperatura
+    planeta.agua = agua
 
     return res.status(201).send({
-        message: "movie atualizado!",
-        filmes,
+        message: "planeta atualizado!",
+        planeta,
     })
 })
 
@@ -80,19 +93,19 @@ planetasRoutes.put("/:id", (req, res) => {
 planetasRoutes.delete("/:id", (req, res) => {
     const { id } = req.params
 
-    let filmes = planetas.find((movie) => 
-        movie.id === Number(id)
+    let planeta = planetas.find((planet) => 
+        planet.id === Number(id)
     )
     
-        if (!filmes) {
-        return res.status(404).send({message: "Filme não encontrado!" })
+        if (!planeta) {
+        return res.status(404).send({message: "Planeta não encontrado!" })
     } 
 
-    filmes =  planetas.filter((movie) => movie.id !== Number(id) )
+    planetas =  planetas.filter((planet) => planet.id !== Number(id) )
 
     return res.status(200).send({
-        message: "Filme deletado!",
-        filmes,
+        message: "Planeta deletado!",
+        planeta,
     })
 })
 
